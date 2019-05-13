@@ -57,4 +57,5 @@ private:
 	bool IsCorrectWord(FString Word);
 	FBullCowCount RetrieveBullCowCount(FString Word);
 	void UpdateBullCowCount(char GChar, char HWChar);
+	void ResetBullCowCount();
 };

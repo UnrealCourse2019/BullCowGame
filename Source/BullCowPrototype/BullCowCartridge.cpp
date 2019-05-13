@@ -12,6 +12,7 @@ void UBullCowCartridge::BeginPlay() // Our substitute for main
 void UBullCowCartridge::OnInput(const FString& input) // When the player hits enter
 {
     ++CurrentTry;
+    ResetBullCowCount();
     ClearScreen();
     PrintLine(
         FString("You entered: ") +
@@ -181,4 +182,10 @@ void UBullCowCartridge::UpdateBullCowCount(char GChar, char HWChar)
     {
         ++BullCowCount.Cows;
     }
+}
+
+void UBullCowCartridge::ResetBullCowCount()
+{
+    BullCowCount.Bulls = 0;
+    BullCowCount.Cows = 0;
 }
