@@ -11,34 +11,14 @@ void UBullCowCartridge::BeginPlay() // Our substitute for main
 
 void UBullCowCartridge::OnInput(const FString& input) // When the player hits enter
 {
+    FString PlayerGuess = input.ToLower(); // Convert player guess to lowercase
     ++CurrentTry;
-    ResetBullCowCount();
     ClearScreen();
-    PrintLine(
-        FString("You entered: ") +
-        FString(input)
-        );
-
-    if (CheckGuessValidity(input) == EGuessStatus::Valid)
+    PrintLine(FString::Printf(TEXT("You entered: %s"), *PlayerGuess));
+    if (CheckGuessValidity(PlayerGuess) == EGuessStatus::Valid)
     {
-        FBullCowCount BullCows = RetrieveBullCowCount(input);
-        // PresentUserFeedback(RetrieveBullCowCount(input));
-        if (BullCows.Bulls == HiddenWord.Len())
-        {
-            PrintLine("You win!");
-        }
-        else
-        {
-            PrintLine(
-                FString::FromInt(BullCows.Bulls) + 
-                FString(" Bulls")
-                );
-            PrintLine(
-                FString::FromInt(BullCows.Cows) +
-                FString(" Cows")
-                );
-            PrintTriesRemaining();
-        }
+        FBullCowCount BullCows = RetrieveBullCowCount(PlayerGuess);
+        PresentUserFeedback(RetrieveBullCowCount(PlayerGuess));
     }
 }
 
@@ -49,15 +29,26 @@ void UBullCowCartridge::SetupGame()
     MaxTries = 5;
 }
 
+void UBullCowCartridge::PresentUserFeedback(FBullCowCount BullCowCount)
+{
+    if (BullCowCount.Bulls == HiddenWord.Len())
+        {
+            PrintLine("You win!");
+        }
+        else
+        {
+            PrintLine("Your guess contains:");
+            PrintLine(FString::Printf(TEXT("%d Bulls"), BullCowCount.Bulls));
+            PrintLine(FString::Printf(TEXT("%d Cows"), BullCowCount.Cows));
+            PrintTriesRemaining();
+        }
+}
+
 void UBullCowCartridge::PrintIntro()
 {
     PrintLine("Welcome to the Bull Cow Game!");
     PrintLine("Can you guess the hidden word?");
-    PrintLine(
-        FString("You have ") +
-        FString::FromInt(GetMaxTries()) +
-        FString(" attempts!")
-        );
+    PrintLine(FString::Printf(TEXT("You have %d attempts!"), GetMaxTries()));
 }
 
 int32 UBullCowCartridge::GetCurrentTries()
@@ -70,19 +61,15 @@ int32 UBullCowCartridge::GetMaxTries()
     return MaxTries;
 }
 
-FString UBullCowCartridge::GetHiddenWordLength()
+int32 UBullCowCartridge::GetHiddenWordLength()
 {
-    return FString::FromInt(HiddenWord.Len());
+    return HiddenWord.Len();
 }
 
 void UBullCowCartridge::PrintTriesRemaining()
 {
     int32 TriesRemaining = GetMaxTries() - GetCurrentTries();
-    PrintLine(
-        FString("You have: ") +
-        FString::FromInt(TriesRemaining) +
-        FString(" tries remaining")
-        );
+    PrintLine(FString::Printf(TEXT("You have: %d tries remaining"), TriesRemaining));
 }
 
 // Check if players guess is valid
@@ -90,17 +77,8 @@ EGuessStatus UBullCowCartridge::CheckGuessValidity(FString Guess)
 {
     if (Guess.Len() != HiddenWord.Len()) // if guess is wrong length
     {
-        PrintLine(
-            FString("Please enter a ") +
-            FString(GetHiddenWordLength()) +
-            FString(" letter word!")
-            );
+        PrintLine(FString::Printf(TEXT("Please enter a %d letter word!"), GetHiddenWordLength()));
         return EGuessStatus::Wrong_Length;
-    }
-    else if (!IsLowercase(Guess))
-    {
-        PrintLine("The word needs to be lowercase!");
-        return EGuessStatus::Not_Lowercase;
     }
     else if (!IsIsogram(Guess))
     {
@@ -114,78 +92,41 @@ EGuessStatus UBullCowCartridge::CheckGuessValidity(FString Guess)
 }
 
 // Checks if word is isogram
-bool UBullCowCartridge::IsIsogram(FString Word)
+bool UBullCowCartridge::IsIsogram(const FString Word)
 {
-    if (Word.Len() <= 1) // Treat 0 and 1 letter words as isograms
+    TArray<TCHAR> Letters;
+    for (TCHAR CurrentLetter : Word) // Loop through each letter in the word
     {
-        return true;
-    }
-
-    // TODO switch to TSet
-        // return(TSet.Add(letter))
-    TArray<char> Letters;
-    for (int i = 0; i < Word.Len(); ++i) // Loop through each letter in the word
-    {
-        if (Letters.Contains(Word[i])) // is the letter contained in the array?
+        if(Letters.Contains(CurrentLetter)) // If letter is already in set
         {
-            return false; // if found, word is not isogram
+             return false; // Word is not isogram
         }
-
-        else // if not found, add the letter to the array
-        {
-            Letters.Add(Word[i]);
-        }
-    }
-    // If loop finishes, word is isogram
-    return true;
-}
-
-bool UBullCowCartridge::IsLowercase(FString Word)
-{
-    // TODO consider using an FString function
-    for (auto Letter : Word)
-    {
-        if(!islower(Letter))
-        {
-            return false;
-        }
-    }
+        Letters.Add(CurrentLetter); // Add the letter to the set, if not found
+     }
     return true;
 }
 
 FBullCowCount UBullCowCartridge::RetrieveBullCowCount(FString Guess)
 {
-    int32 WordLength = HiddenWord.Len();
+    FBullCowCount BullCowResults;
     // Loop through all letters in the hidden word
-    for (int32 HWChar = 0; HWChar < WordLength; ++HWChar)
+    for (int32 GuessPos = 0; GuessPos < GetHiddenWordLength(); ++GuessPos)
     {
-        // Loop through all letters in player guess
-        for (int32 GChar = 0; GChar < WordLength; GChar++)
+        const TCHAR Letter = Guess[GuessPos];
+        int32 FoundPos = 0;
+        const bool Found = HiddenWord.FindChar(Letter, FoundPos);
+
+        if (Found)
         {
-            // If Player guess char match hidden word char
-            if (Guess[GChar] == HiddenWord[HWChar])
+            if (FoundPos == GuessPos)
             {
-                UpdateBullCowCount(GChar, HWChar);
+                ++BullCowResults.Bulls;
+            }
+            else
+            {
+                ++BullCowResults.Cows;
             }
         }
     }
-    return BullCowCount;
-}
-
-void UBullCowCartridge::UpdateBullCowCount(char GChar, char HWChar)
-{
-    if (HWChar == GChar)
-    {
-        ++BullCowCount.Bulls;
-    }
-    else
-    {
-        ++BullCowCount.Cows;
-    }
-}
-
-void UBullCowCartridge::ResetBullCowCount()
-{
-    BullCowCount.Bulls = 0;
-    BullCowCount.Cows = 0;
+    return BullCowResults;
 }

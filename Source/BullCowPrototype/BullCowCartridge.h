@@ -30,8 +30,8 @@ class BULLCOWPROTOTYPE_API UBullCowCartridge : public UCartridge
 	GENERATED_BODY()
 
 public:
-	virtual void BeginPlay();
-	virtual void OnInput(const FString& input);
+	virtual void BeginPlay() override;
+	virtual void OnInput(const FString& input) override;
 
 private:
 	// PARAMETERS - for tuning
@@ -40,7 +40,6 @@ private:
 
 	// STATE - private instance (member) variables
 	int32 CurrentTry;
-	FBullCowCount BullCowCount;
 
 	// User interface related
 	void PrintIntro();
@@ -50,12 +49,9 @@ private:
 	// Game logic related
 	int32 GetMaxTries();
 	int32 GetCurrentTries();
-	FString GetHiddenWordLength();
+	int32 GetHiddenWordLength();
 	EGuessStatus CheckGuessValidity(FString Guess);
-	bool IsIsogram(FString Word);
-	bool IsLowercase(FString Word);
-	bool IsCorrectWord(FString Word);
+	bool IsIsogram(const FString Word);
 	FBullCowCount RetrieveBullCowCount(FString Word);
-	void UpdateBullCowCount(char GChar, char HWChar);
-	void ResetBullCowCount();
+	void PresentUserFeedback(FBullCowCount BullCowCount);
 };
