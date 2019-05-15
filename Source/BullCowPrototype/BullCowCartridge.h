@@ -17,7 +17,7 @@ enum class EGuessStatus
 };
 
 USTRUCT()
-struct FBullCowCount
+struct FBullCowStruct
 {
 	GENERATED_BODY()
 	int32 Bulls = 0;
@@ -40,18 +40,22 @@ private:
 
 	// STATE - private instance (member) variables
 	int32 CurrentTry;
+	bool RoundStarted = false;
 
 	// User interface related
 	void PrintIntro();
-	void SetupGame();
+	void StartNewRound();
 	void PrintTriesRemaining();
 	
 	// Game logic related
-	int32 GetMaxTries();
-	int32 GetCurrentTries();
-	int32 GetHiddenWordLength();
-	EGuessStatus CheckGuessValidity(FString Guess);
+	int32 GetMaxTries() const;
+	int32 GetCurrentTries() const;
+	int32 GetTriesRemaining() const;
+	int32 GetHiddenWordLength() const;
+	EGuessStatus CheckGuessValidity(const FString Guess);
 	bool IsIsogram(const FString Word);
-	FBullCowCount RetrieveBullCowCount(FString Word);
-	void PresentUserFeedback(FBullCowCount BullCowCount);
+	FBullCowStruct RetrieveBullCowResults(const FString Word);
+	void PresentUserFeedback(FBullCowStruct BullCowCount);
+	void ProcessGuess(const FString Guess);
+	FString GetRandomWord();
 };

@@ -1,81 +1,118 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "BullCowCartridge.h"
 
-void UBullCowCartridge::BeginPlay() // Our substitute for main
+void UBullCowCartridge::StartNewRound()
+{
+    HiddenWord = GetRandomWord();
+    CurrentTry = 0;
+    MaxTries = 5;
+    RoundStarted = true;
+    ClearScreen();
+    PrintIntro();
+}
+
+void UBullCowCartridge::BeginPlay()
 {
     Super::BeginPlay();
 
-    SetupGame();
-    PrintIntro();
+    StartNewRound();
 }
 
 void UBullCowCartridge::OnInput(const FString& input) // When the player hits enter
 {
-    FString PlayerGuess = input.ToLower(); // Convert player guess to lowercase
-    ++CurrentTry;
-    ClearScreen();
-    PrintLine(FString::Printf(TEXT("You entered: %s"), *PlayerGuess));
-    if (CheckGuessValidity(PlayerGuess) == EGuessStatus::Valid)
+    if (!RoundStarted) // If the round hasn't started, enter any key to start a new round
     {
-        FBullCowCount BullCows = RetrieveBullCowCount(PlayerGuess);
-        PresentUserFeedback(RetrieveBullCowCount(PlayerGuess));
+        StartNewRound();
+    }
+    else // Process players guess
+    {
+        FString PlayerGuess = input.ToLower(); // Convert player guess to lowercase
+        ProcessGuess(PlayerGuess);
     }
 }
 
-void UBullCowCartridge::SetupGame()
+void UBullCowCartridge::ProcessGuess(const FString Guess)
 {
-    HiddenWord = "plane";
-    CurrentTry = 0;
-    MaxTries = 5;
+    ++CurrentTry;
+    ClearScreen();
+    PrintLine(FString::Printf(TEXT("You entered: %s"), *Guess));
+    if (CheckGuessValidity(Guess) == EGuessStatus::Valid)
+    {
+        PresentUserFeedback(RetrieveBullCowResults(Guess));
+    }
 }
 
-void UBullCowCartridge::PresentUserFeedback(FBullCowCount BullCowCount)
+void UBullCowCartridge::PresentUserFeedback(FBullCowStruct BullCowCount)
 {
     if (BullCowCount.Bulls == HiddenWord.Len())
         {
+            RoundStarted = false; // Finish the round
             PrintLine("You win!");
+            PrintLine("Enter any key to play again!");
+            // Play Moo Sound Effect
         }
         else
         {
-            PrintLine("Your guess contains:");
-            PrintLine(FString::Printf(TEXT("%d Bulls"), BullCowCount.Bulls));
-            PrintLine(FString::Printf(TEXT("%d Cows"), BullCowCount.Cows));
-            PrintTriesRemaining();
+            if (GetTriesRemaining() == 0) // Has the player run out of tries?
+            {
+                RoundStarted = false; // Finish the round due to no tries remaining
+                PrintLine("You lose!");
+                PrintLine("Enter any key to play again!");
+            }
+            else
+            {
+                PrintLine("Your guess contains:");
+                PrintLine(FString::Printf(TEXT("%d Bulls"), BullCowCount.Bulls));
+                PrintLine(FString::Printf(TEXT("%d Cows"), BullCowCount.Cows));
+                PrintTriesRemaining();
+            }
+            
         }
 }
 
 void UBullCowCartridge::PrintIntro()
 {
     PrintLine("Welcome to the Bull Cow Game!");
-    PrintLine("Can you guess the hidden word?");
+    PrintLine(FString::Printf(TEXT("Can you guess the %d letter hidden word?"), GetHiddenWordLength()));
     PrintLine(FString::Printf(TEXT("You have %d attempts!"), GetMaxTries()));
 }
 
-int32 UBullCowCartridge::GetCurrentTries()
+FString UBullCowCartridge::GetRandomWord()
+{
+    TArray<FString> RandomWordCollection = {"car", "plane", "unreal", "england"};
+    FString RandomWord = RandomWordCollection[rand() % RandomWordCollection.Num()];
+    return RandomWord;
+}
+
+int32 UBullCowCartridge::GetCurrentTries() const
 {
     return CurrentTry;
 }
 
-int32 UBullCowCartridge::GetMaxTries()
+int32 UBullCowCartridge::GetMaxTries() const
 {
     return MaxTries;
 }
 
-int32 UBullCowCartridge::GetHiddenWordLength()
+int32 UBullCowCartridge::GetTriesRemaining() const
+{
+    return GetMaxTries() - GetCurrentTries();
+}
+
+int32 UBullCowCartridge::GetHiddenWordLength() const
 {
     return HiddenWord.Len();
 }
 
 void UBullCowCartridge::PrintTriesRemaining()
 {
-    int32 TriesRemaining = GetMaxTries() - GetCurrentTries();
-    PrintLine(FString::Printf(TEXT("You have: %d tries remaining"), TriesRemaining));
+    PrintLine(FString::Printf(TEXT("You have: %d tries remaining"), GetTriesRemaining()));
 }
 
 // Check if players guess is valid
-EGuessStatus UBullCowCartridge::CheckGuessValidity(FString Guess)
+EGuessStatus UBullCowCartridge::CheckGuessValidity(const FString Guess)
 {
-    if (Guess.Len() != HiddenWord.Len()) // if guess is wrong length
+    if (Guess.Len() != GetHiddenWordLength()) // if guess is wrong length
     {
         PrintLine(FString::Printf(TEXT("Please enter a %d letter word!"), GetHiddenWordLength()));
         return EGuessStatus::Wrong_Length;
@@ -94,31 +131,30 @@ EGuessStatus UBullCowCartridge::CheckGuessValidity(FString Guess)
 // Checks if word is isogram
 bool UBullCowCartridge::IsIsogram(const FString Word)
 {
-    TArray<TCHAR> Letters;
+    TArray<TCHAR> Letters; // Array for storing each letter in word
     for (TCHAR CurrentLetter : Word) // Loop through each letter in the word
     {
-        if(Letters.Contains(CurrentLetter)) // If letter is already in set
+        if(Letters.Contains(CurrentLetter)) // If letter is already in array
         {
              return false; // Word is not isogram
         }
-        Letters.Add(CurrentLetter); // Add the letter to the set, if not found
+        Letters.Add(CurrentLetter); // If letter not found, add to array.
      }
-    return true;
+     return true;
 }
 
-FBullCowCount UBullCowCartridge::RetrieveBullCowCount(FString Guess)
+FBullCowStruct UBullCowCartridge::RetrieveBullCowResults(const FString Guess)
 {
-    FBullCowCount BullCowResults;
+    FBullCowStruct BullCowResults;
     // Loop through all letters in the hidden word
     for (int32 GuessPos = 0; GuessPos < GetHiddenWordLength(); ++GuessPos)
     {
-        const TCHAR Letter = Guess[GuessPos];
-        int32 FoundPos = 0;
-        const bool Found = HiddenWord.FindChar(Letter, FoundPos);
+        int32 OutFoundPos = 0;  // Used as OUT parameter for line below
+        const bool bFound = HiddenWord.FindChar(Guess[GuessPos], OutFoundPos);
 
-        if (Found)
+        if (bFound) // If the current letter in loop exists in hidden word
         {
-            if (FoundPos == GuessPos)
+            if (OutFoundPos == GuessPos) // If in the same place
             {
                 ++BullCowResults.Bulls;
             }
