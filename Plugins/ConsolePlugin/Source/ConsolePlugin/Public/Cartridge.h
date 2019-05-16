@@ -12,12 +12,12 @@ class CONSOLEPLUGIN_API UCartridge : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	virtual void OnInput(const FString& input);
+public:
+    virtual void OnInput(const FString& Input) PURE_VIRTUAL(UCartridge::OnInput,);
 
 
 protected:
-	void PrintLine(const FString& line);
-	void ClearScreen();
+	void PrintLine(const FString& Line) const;
+	void ClearScreen() const;
 
 };

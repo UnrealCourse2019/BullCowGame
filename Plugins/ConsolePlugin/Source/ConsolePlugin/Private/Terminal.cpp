@@ -8,7 +8,7 @@
 
 #include "Cartridge.h"
 
-const FString PROMPT = TEXT("$> ");
+constexpr TCHAR* GPrompt = TEXT("$> ");
 
 // Called when the game starts
 void UTerminal::BeginPlay()
@@ -31,7 +31,7 @@ void UTerminal::ActivateTerminal()
     RepeatBindingIndex = GetOwner()->InputComponent->KeyBindings.Emplace(MoveTemp(RepeatBinding));
 }
 
-void UTerminal::DeactivateTerminal()
+void UTerminal::DeactivateTerminal() const
 {
 	if (GetOwner()->InputComponent == nullptr) return;
 	
@@ -53,7 +53,7 @@ void UTerminal::ClearScreen()
 FString UTerminal::GetScreenText() const
 {
 	TArray<FString> FullTerminal = Buffer;
-	FullTerminal.Add(PROMPT + InputLine);
+	FullTerminal.Add(GPrompt + InputLine);
 
 	// WrapLines
 	TArray<FString> WrappedLines(WrapLines(FullTerminal));
@@ -107,8 +107,8 @@ void UTerminal::OnKeyDown(FKey Key)
 		Backspace();
 	}
 
-	FString KeyString = GetKeyString(Key);
-	FModifierKeysState KeyState = FSlateApplication::Get().GetModifierKeys();
+    const FString KeyString = GetKeyString(Key);
+    const FModifierKeysState KeyState = FSlateApplication::Get().GetModifierKeys();
 	if (KeyState.IsShiftDown() || KeyState.AreCapsLocked())
 	{
 		InputLine += KeyString.ToUpper();
@@ -124,11 +124,11 @@ void UTerminal::OnKeyDown(FKey Key)
 
 void UTerminal::AcceptInputLine()
 {
-	Buffer.Emplace(PROMPT + InputLine);
-	auto cartridge = GetOwner()->FindComponentByClass<UCartridge>();
-	if (cartridge != nullptr)
+	Buffer.Emplace(GPrompt + InputLine);
+	auto Cartridge = GetOwner()->FindComponentByClass<UCartridge>();
+	if (Cartridge != nullptr)
 	{
-		cartridge->OnInput(InputLine);
+		Cartridge->OnInput(InputLine);
 	}
 	InputLine = TEXT("");
 

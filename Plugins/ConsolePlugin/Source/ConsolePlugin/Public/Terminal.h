@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameFramework/Actor.h"
-#include "UObject/ObjectMacros.h"
 #include "Terminal.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTextUpdateSignature, FString, Text);
@@ -28,9 +27,9 @@ public:
 	void ActivateTerminal();
 
 	UFUNCTION(BlueprintCallable)
-	void DeactivateTerminal();
+	void DeactivateTerminal() const;
 
-	void PrintLine(const FString& line);
+	void PrintLine(const FString& Line);
 	void ClearScreen();
 
 protected:
@@ -38,7 +37,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	void OnKeyDown(FKey key);
+	void OnKeyDown(FKey Key);
 	TArray<FString> WrapLines(const TArray<FString>&  Lines) const;
 	void Truncate(TArray<FString>& Lines) const;
 	FString JoinWithNewline(const TArray<FString>& Lines) const;
