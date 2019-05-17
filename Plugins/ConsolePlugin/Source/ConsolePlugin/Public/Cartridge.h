@@ -18,8 +18,8 @@ public:
 
 protected:
 	void PrintLine(const FString& Line) const;
-    template<typename ...Types>
-    void PrintLine(const TCHAR* Fmt, Types... Args) const
+    template<unsigned N, typename  ...Types>
+    void PrintLine(const TCHAR (&Fmt)[N], Types... Args) const
     {
         PrintLine(FString::Printf(Fmt, Args...));
     }
