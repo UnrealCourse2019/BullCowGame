@@ -8,7 +8,7 @@
 
 #include "Cartridge.h"
 
-constexpr TCHAR* GPrompt = TEXT("$> ");
+constexpr TCHAR GPrompt[4] = TEXT("$> ");
 
 // Called when the game starts
 void UTerminal::BeginPlay()
