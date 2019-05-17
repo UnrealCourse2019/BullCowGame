@@ -17,7 +17,7 @@ protected:
 	void BeginPlay() override;
 
 	void PrintLine(const FString& Line) const;
-	template<unsigned N, typename ...Types>
+	template<SIZE_T N, typename ...Types>
 	void PrintLine(const TCHAR (&Fmt)[N], Types... Args) const
 	{
 		PrintLine(FString::Printf(Fmt, Args...));
