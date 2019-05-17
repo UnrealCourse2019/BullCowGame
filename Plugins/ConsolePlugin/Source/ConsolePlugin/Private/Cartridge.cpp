@@ -2,21 +2,21 @@
 
 
 #include "Cartridge.h"
-
+#include "Terminal.h"
 #include "GameFramework/Actor.h"
 
-#include "Terminal.h"
+void UCartridge::BeginPlay()
+{
+	Terminal = GetOwner()->FindComponentByClass<UTerminal>();
+	checkf(Terminal, TEXT("[%s]: No Terminal found"), *GetName())
+}
 
 void UCartridge::PrintLine(const FString& Line) const
 {
-    auto Terminal = GetOwner()->FindComponentByClass<UTerminal>();
-    if (Terminal == nullptr) return;
-    Terminal->PrintLine(Line);
+	Terminal->PrintLine(Line);
 }
 
 void UCartridge::ClearScreen() const
 {
-    auto Terminal = GetOwner()->FindComponentByClass<UTerminal>();
-    if (Terminal == nullptr) return;
-    Terminal->ClearScreen();
+	Terminal->ClearScreen();
 }
