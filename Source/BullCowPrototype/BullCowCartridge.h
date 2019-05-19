@@ -31,7 +31,7 @@ class BULLCOWPROTOTYPE_API UBullCowCartridge : public UCartridge
 
 public:
 	virtual void BeginPlay() override;
-	virtual void OnInput(const FString& input) override;
+	virtual void OnInput(const FString& Input) override;
 
 private:
 	// PARAMETERS - for tuning
@@ -40,22 +40,21 @@ private:
 
 	// STATE - private instance (member) variables
 	int32 CurrentTry;
-	bool RoundStarted = false;
+	bool bRoundStarted = false;
 
 	// User interface related
 	void PrintIntro();
-	void StartNewRound();
 	void PrintTriesRemaining();
 	
 	// Game logic related
-	int32 GetMaxTries() const;
-	int32 GetCurrentTries() const;
+	void StartNewRound();
 	int32 GetTriesRemaining() const;
-	int32 GetHiddenWordLength() const;
 	EGuessStatus CheckGuessValidity(const FString Guess);
 	bool IsIsogram(const FString Word);
 	FBullCowStruct RetrieveBullCowResults(const FString Word);
 	void PresentUserFeedback(FBullCowStruct BullCowCount);
 	void ProcessGuess(const FString Guess);
+	void EndRound(bool LevelCompleted);
+	void PrintBullCowResults(const FBullCowStruct BullCowCount);
 	FString GetRandomWord();
 };
