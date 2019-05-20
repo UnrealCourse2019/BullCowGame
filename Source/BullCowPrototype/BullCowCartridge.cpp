@@ -50,9 +50,9 @@ void UBullCowCartridge::ProcessGuess(const FString Guess)
 {
     ++CurrentTry;
     ClearScreen();
-    PrintLine(FString::Printf(TEXT("You entered: %s"), *Guess));
+    PrintLine(TEXT("You entered: %s"), *Guess);
 
-    if (CheckGuessValidity(Guess) == EGuessStatus::Valid) // If word is right length & isogram
+    if (IsGuessValid(Guess))
     {
         PresentUserFeedback(RetrieveBullCowResults(Guess));
     }
@@ -77,9 +77,9 @@ void UBullCowCartridge::PresentUserFeedback(FBullCowStruct BullCowCount)
     }
     else
     {
-        if (GetTriesRemaining() == 0) // Has the player run out of tries?
+        if (GetTriesRemaining() == 0)
         {
-            EndRound(false); // Player has failed
+            EndRound(false); // Player has failed this round
         }
         else // Player still has tries remaining
         {
@@ -89,23 +89,23 @@ void UBullCowCartridge::PresentUserFeedback(FBullCowStruct BullCowCount)
     }
 }
 
-void UBullCowCartridge::PrintIntro()
+void UBullCowCartridge::PrintIntro() const
 {
     PrintLine("Welcome to the Bull Cow Game!");
-    PrintLine(FString::Printf(TEXT("Can you guess the %d letter hidden word?"), HiddenWord.Len()));
-    PrintLine(FString::Printf(TEXT("You have %d attempts!"), MaxTries));
+    PrintLine(TEXT("Can you guess the %i letter hidden word?"), HiddenWord.Len());
+    PrintLine(TEXT("You have %i attempts!"), MaxTries);
 }
 
-void UBullCowCartridge::PrintBullCowResults(const FBullCowStruct BullCowCount)
+void UBullCowCartridge::PrintBullCowResults(const FBullCowStruct BullCowCount) const
 {
     PrintLine("Your guess contains:");
-    PrintLine(FString::Printf(TEXT("%d Bulls"), BullCowCount.Bulls));
-    PrintLine(FString::Printf(TEXT("%d Cows"), BullCowCount.Cows));
+    PrintLine(TEXT("%i Bulls"), BullCowCount.Bulls);
+    PrintLine(TEXT("%i Cows"), BullCowCount.Cows);
 }
 
-FString UBullCowCartridge::GetRandomWord()
+FString UBullCowCartridge::GetRandomWord() const
 {
-    TArray<FString> RandomWordCollection = {"car", "plane", "unreal", "england"};
+    TArray<FString> RandomWordCollection = {"car", "plane", "unreal"};
     FString RandomWord = RandomWordCollection[rand() % RandomWordCollection.Num()];
     return RandomWord;
 }
@@ -115,27 +115,27 @@ int32 UBullCowCartridge::GetTriesRemaining() const
     return MaxTries - CurrentTry;
 }
 
-void UBullCowCartridge::PrintTriesRemaining()
+void UBullCowCartridge::PrintTriesRemaining() const
 {
-    PrintLine(FString::Printf(TEXT("You have: %d tries remaining"), GetTriesRemaining()));
+    PrintLine(TEXT("You have: %i tries remaining"), GetTriesRemaining());
 }
 
-EGuessStatus UBullCowCartridge::CheckGuessValidity(const FString Guess)
+bool UBullCowCartridge::IsGuessValid(const FString Guess) const
 {
     if (Guess.Len() != HiddenWord.Len()) // if guess is wrong length
     {
-        PrintLine(FString::Printf(TEXT("Please enter a %d letter word!"), HiddenWord.Len()));
-        return EGuessStatus::Wrong_Length;
+        PrintLine(TEXT("Please enter a %i letter word!"), HiddenWord.Len());
+        return false;
     }
     else if (!IsIsogram(Guess))
     {
         PrintLine("You need to enter a word without repeating letters!");
-        return EGuessStatus::Not_Isogram;
+        return false;
     }
-    return EGuessStatus::Valid;
+    return true; // Guess is valid
 }
 
-bool UBullCowCartridge::IsIsogram(const FString Word)
+bool UBullCowCartridge::IsIsogram(const FString Word) const
 {
     TArray<TCHAR> Letters; // Array for storing each letter in word
     for (TCHAR CurrentLetter : Word) // Loop through each letter in the players guess
@@ -149,7 +149,7 @@ bool UBullCowCartridge::IsIsogram(const FString Word)
      return true;
 }
 
-FBullCowStruct UBullCowCartridge::RetrieveBullCowResults(const FString Guess)
+FBullCowStruct UBullCowCartridge::RetrieveBullCowResults(const FString Guess) const
 {
     FBullCowStruct BullCowResults;
     

@@ -2,9 +2,9 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "Blank Example Plugin",
-	"Description": "An example of a minimal plugin.  This can be used as a starting point when creating your own plugin.",
-	"Category": "Examples",
+	"FriendlyName": "GameDev.tv - Terminal Plugin",
+	"Description": "This plugin was developed for the Unreal C++ Developer Course by GameDev.tv",
+	"Category": "GameDev.tv",
 	"CreatedBy": "GameDev.tv",
 	"CreatedByURL": "http://www.gamedev.tv",
 	"DocsURL": "",
@@ -12,6 +12,7 @@
 	"SupportURL": "",
 	"EngineVersion": "4.22.0",
 	"CanContainContent": true,
+	"IsBetaVersion": false,
 	"Installed": true,
 	"Modules": [
 		{

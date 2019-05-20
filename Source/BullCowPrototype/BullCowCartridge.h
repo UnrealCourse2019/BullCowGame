@@ -6,16 +6,6 @@
 #include "Cartridge.h"
 #include "BullCowCartridge.generated.h"
 
-UENUM()
-enum class EGuessStatus
-{
-	Invalid,
-	Valid,
-	Not_Isogram,
-	Not_Lowercase,
-	Wrong_Length
-};
-
 USTRUCT()
 struct FBullCowStruct
 {
@@ -24,7 +14,7 @@ struct FBullCowStruct
 	int32 Cows = 0;
 };
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS()
 class BULLCOWPROTOTYPE_API UBullCowCartridge : public UCartridge
 {
 	GENERATED_BODY()
@@ -43,18 +33,18 @@ private:
 	bool bRoundStarted = false;
 
 	// User interface related
-	void PrintIntro();
-	void PrintTriesRemaining();
+	void PrintIntro() const;
+	void PrintTriesRemaining() const;
 	
 	// Game logic related
 	void StartNewRound();
 	int32 GetTriesRemaining() const;
-	EGuessStatus CheckGuessValidity(const FString Guess);
-	bool IsIsogram(const FString Word);
-	FBullCowStruct RetrieveBullCowResults(const FString Word);
+	bool IsGuessValid(const FString Guess) const;
+	bool IsIsogram(const FString Word) const;
+	FBullCowStruct RetrieveBullCowResults(const FString Word) const;
 	void PresentUserFeedback(FBullCowStruct BullCowCount);
 	void ProcessGuess(const FString Guess);
 	void EndRound(bool LevelCompleted);
-	void PrintBullCowResults(const FBullCowStruct BullCowCount);
-	FString GetRandomWord();
+	void PrintBullCowResults(const FBullCowStruct BullCowCount) const;
+	FString GetRandomWord() const;
 };
