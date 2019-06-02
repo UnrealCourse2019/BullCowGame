@@ -12,4 +12,13 @@ void UBullCowCartridge::OnInput(const FString& Input) // When the player hits en
 {
     ClearScreen();
     FString HiddenWord = TEXT("Cake");
+    if (Input.Len() == HiddenWord.Len())
+    {
+        PrintLine(TEXT("Correct amount of letters!"));
+    }
+    else
+    {
+        PrintLine(TEXT("You need to enter a 4 letter word!"));
+    }
+    
 }
