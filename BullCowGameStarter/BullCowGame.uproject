@@ -1,0 +1,32 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "4.22",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "BullCowGame",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"ConsolePlugin"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "ConsolePlugin",
+			"Enabled": true
+		},
+		
+		{
+		"Name": "OculusVR",
+		"Enabled": false
+		},
+		
+		{
+			"Name": "SteamVR",
+			"Enabled": false
+		}
+	]
+}
