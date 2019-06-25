@@ -44,6 +44,7 @@ private:
 	void AcceptInputLine();
 	void Backspace();
 	FString GetKeyString(FKey Key) const;
+	void UpdateText();
 
 
 	UPROPERTY(EditAnywhere)

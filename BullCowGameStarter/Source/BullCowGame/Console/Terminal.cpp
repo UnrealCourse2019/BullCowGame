@@ -14,7 +14,7 @@ constexpr TCHAR GPrompt[4] = TEXT("$> ");
 void UTerminal::BeginPlay()
 {
 	Super::BeginPlay();
-	//TextUpdated.Broadcast(GetScreenText());
+	UpdateText();
 }
 
 void UTerminal::ActivateTerminal()
@@ -43,11 +43,14 @@ void UTerminal::DeactivateTerminal() const
 void UTerminal::PrintLine(const FString& Line)
 {
 	Buffer.Emplace(Line);
+	UE_LOG(LogTemp, Display, TEXT("Your message"));	
+	UpdateText();
 }
 
 void UTerminal::ClearScreen()
 {
 	Buffer.Empty();
+	UpdateText();
 }
 
 FString UTerminal::GetScreenText() const
@@ -118,7 +121,7 @@ void UTerminal::OnKeyDown(FKey Key)
 		InputLine += KeyString.ToLower();
 	}
 
-	TextUpdated.Broadcast(GetScreenText());
+	UpdateText();
 }
 
 
@@ -154,4 +157,9 @@ FString UTerminal::GetKeyString(FKey Key) const
 	}
 
 	return TEXT("");
+}
+
+void UTerminal::UpdateText()
+{
+	TextUpdated.Broadcast(GetScreenText());
 }
