@@ -14,7 +14,7 @@ constexpr TCHAR GPrompt[4] = TEXT("$> ");
 void UTerminal::BeginPlay()
 {
 	Super::BeginPlay();
-	TextUpdated.Broadcast(GetScreenText());
+	//TextUpdated.Broadcast(GetScreenText());
 }
 
 void UTerminal::ActivateTerminal()
