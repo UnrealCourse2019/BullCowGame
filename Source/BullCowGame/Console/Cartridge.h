@@ -17,6 +17,7 @@ protected:
 	void BeginPlay() override;
 
 	void PrintLine(const FString& Line) const;
+	void PrintLine(const TCHAR* Line) const; // Avoid template for this case.
 	template<SIZE_T N, typename ...Types>
 	void PrintLine(const TCHAR (&Fmt)[N], Types... Args) const
 	{

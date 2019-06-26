@@ -17,6 +17,11 @@ void UCartridge::PrintLine(const FString& Line) const
 	Terminal->PrintLine(Line);
 }
 
+void UCartridge::PrintLine(const TCHAR* Line) const
+{
+	Terminal->PrintLine(Line);
+}
+
 void UCartridge::ClearScreen() const
 {
 	Terminal->ClearScreen();
