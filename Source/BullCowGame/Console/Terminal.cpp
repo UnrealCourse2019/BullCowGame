@@ -42,8 +42,14 @@ void UTerminal::DeactivateTerminal() const
 
 void UTerminal::PrintLine(const FString& Line)
 {
-	Buffer.Emplace(Line);
-	UE_LOG(LogTemp, Display, TEXT("Your message"));	
+	FString Input = Line;
+	FString Left, Right;
+	while (Input.Split(TEXT("\n"), &Left, &Right))
+	{
+		Buffer.Emplace(Left);
+		Input = Right;
+	} 
+	Buffer.Emplace(Input);
 	UpdateText();
 }
 
@@ -71,11 +77,12 @@ TArray<FString> UTerminal::WrapLines(const TArray<FString>& Lines) const
 	for (auto &&Line : Lines)
 	{
 		FString CurrentLine = Line;
-		while (CurrentLine.Len() > 0)
+		do
 		{
 			WrappedLines.Add(CurrentLine.Left(MaxColumns));
 			CurrentLine = CurrentLine.RightChop(MaxColumns);
 		}
+		while (CurrentLine.Len() > 0);
 	}
 	return WrappedLines;
 }
@@ -93,7 +100,7 @@ FString UTerminal::JoinWithNewline(const TArray<FString>& Lines) const
 	FString Result;
 	for (auto &&Line : Lines)
 	{
-		Result += Line + TEXT("\n");
+		Result += Line + TEXT(" <br>");
 	}
 	return Result;
 }
