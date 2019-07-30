@@ -7,12 +7,13 @@ void UBullCowCartridge::BeginPlay() // When the game starts
     PrintLine(TEXT("Welcome to Bull Cows!"));
     PrintLine(TEXT("Guess the 4 letter word!")); // Magic Number Remove!
     PrintLine(TEXT("Press enter to continue..."));
+    HiddenWord = TEXT("cake");
 }
 
 void UBullCowCartridge::OnInput(const FString& Input) // When the player hits enter
 {
     ClearScreen();
-    FString HiddenWord = TEXT("cake"); // Move outside this function.
+    
     if (Input == HiddenWord)
     {
         PrintLine(TEXT("You have Won!"));
