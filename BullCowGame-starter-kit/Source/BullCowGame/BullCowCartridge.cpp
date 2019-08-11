@@ -27,9 +27,12 @@ void UBullCowCartridge::OnInput(const FString& Input) // When the player hits en
     }
     else
     {
-        PrintLine(TEXT("You have Lost!"));
-
+        if (Input.Len() != HiddenWord.Len())
+        {
+            PrintLine(TEXT("The Hidden Word is 4 characters long, try again!"));
+        }
         
+        PrintLine(TEXT("You have Lost!"));
     }
     // Check If Isogram
     // Prompt To Guess Again
