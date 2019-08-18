@@ -26,9 +26,20 @@ void UBullCowCartridge::OnInput(const FString& Input) // When the player hits en
         }
         else
         {
-            if (Input.Len() != HiddenWord.Len())
+            PrintLine(TEXT("Lost a life!"));
+            PrintLine(TEXT("%i"), --Lives);
+            
+            if (Lives > 0)
             {
-                PrintLine(TEXT("The Hidden Word is %i characters long. \nYou have lost!"), HiddenWord.Len());
+                if (Input.Len() != HiddenWord.Len())
+                {
+                    PrintLine(TEXT("Sorry, try guessing again! \nYou have %i lives remaining"), Lives);    
+                }
+                
+            }
+            else 
+            {
+                PrintLine(TEXT("You have no lives left!"));
                 EndGame();
             }
         }
@@ -56,11 +67,12 @@ void UBullCowCartridge::SetupGame()
     PrintLine(TEXT("Welcome to Bull Cows!"));
     
     HiddenWord = TEXT("cakes");
-    Lives = 4;
+    Lives = HiddenWord.Len();
     bGameOver = false;
 
     PrintLine(TEXT("Guess the %i letter word!"), HiddenWord.Len());
-    PrintLine(TEXT("Type in your guess. \nPress enter to continue...")); // Prompt Player For Guess
+    PrintLine(TEXT("You have %i lives."), Lives);
+    PrintLine(TEXT("Type in your guess and \npress enter to continue...")); // Prompt Player For Guess
 }
 
 void UBullCowCartridge::EndGame()
