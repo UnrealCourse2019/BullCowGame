@@ -90,18 +90,32 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
 
 bool UBullCowCartridge::IsIsogram(FString Word) const
 {
-    // int32 Index = 0;
-    // int32 Comparison = Index + 1;
 
-    for (int32 Index = 0, Comparison = Index + 1; Comparison < Word.Len(); Comparison++)
+    for (int32 Index = 0; Index < Word.Len(); Index++)
     {
-        if (Word[Index] == Word[Comparison])
+        for (int32 Comparison = Index + 1; Comparison < Word.Len(); Comparison++)
         {
-            return false;
-        } 
+            if (Word[Index] == Word[Comparison])
+            {
+                return false;
+            }
+        }   
     }
 
     return true;
+    
+    // int32 Index = 0;
+    // int32 Comparison = Index + 1;
+
+    // for (int32 Comparison = Index + 1; Comparison < Word.Len(); Comparison++)
+    // {
+    //     if (Word[Index] == Word[Comparison])
+    //     {
+    //         return false;
+    //     } 
+    // }
+
+    
     
     // For each letter. 
     // Start at element [0].
