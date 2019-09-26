@@ -39,8 +39,6 @@ void UBullCowCartridge::SetupGame()
     // const TCHAR HW[] = TEXT("plums");
     // PrintLine(TEXT("Character 1 of the hidden word is: %c"), HiddenWord[0]); // print "c"
     // PrintLine(TEXT("The 4th character of HW is: %c"), HW[3]); // prints "m"
-
-    IsIsogram(HiddenWord);
 }
 
 void UBullCowCartridge::EndGame()
@@ -60,8 +58,8 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
 
     if (Guess.Len() != HiddenWord.Len())
     {
-        PrintLine(TEXT("The hidden word is %i letters long"), HiddenWord.Len());
-        PrintLine(TEXT("Sorry, try guessing again! \nYou have %i lives remaining"), Lives);
+        PrintLine(TEXT("The hidden word is %i letters long."), HiddenWord.Len());
+        PrintLine(TEXT("Sorry, try guessing again! \nYou have %i lives remaining."), Lives);
         return;
     }
 
@@ -69,7 +67,7 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
     if (!IsIsogram(Guess))
     {
         /* code */
-        PrintLine(TEXT("No repeating letters, guess again"));
+        PrintLine(TEXT("No repeating letters, guess again!"));
         return;
     }
 
@@ -92,16 +90,22 @@ void UBullCowCartridge::ProcessGuess(FString Guess)
 
 bool UBullCowCartridge::IsIsogram(FString Word) const
 {
-    for (int32 Index = 0; Index < Word.Len(); Index++)
+    // int32 Index = 0;
+    // int32 Comparison = Index + 1;
+
+    for (int32 Index = 0, Comparison = Index + 1; Comparison < Word.Len(); Comparison++)
     {
-        PrintLine(TEXT("%c"), Word[Index]);
+        if (Word[Index] == Word[Comparison])
+        {
+            return false;
+        } 
     }
+
+    return true;
     
     // For each letter. 
     // Start at element [0].
     // Compare against the next letter.
     // Until we reach [Word.Len() -1].
-    // if any are the same return false.
-    
-    return true;
+    // if any are the same return false.   
 }
