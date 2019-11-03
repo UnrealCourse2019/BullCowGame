@@ -1,16 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "BullCowCartridge.h"
 #include "HiddenWordList.h"
+// #include "Math/UnrealMathUtility.h"
 
 void UBullCowCartridge::BeginPlay() // When the game starts
 {
     Super::BeginPlay();
 
-    SetupGame();
-
-    PrintLine(TEXT("The number of possible words is %i."), Words.Num());
-    PrintLine(TEXT("The number of valid words is: %i."), GetValidWords(Words).Num());
-    PrintLine(TEXT("The HiddenWord is: %s."), *HiddenWord);// Debug Line     
+    SetupGame();  
 }
 
 void UBullCowCartridge::OnInput(const FString& PlayerInput) // When the player hits enter
@@ -31,13 +28,14 @@ void UBullCowCartridge::SetupGame()
     // Welcoming The Player
     PrintLine(TEXT("Welcome to Bull Cows!"));
     
-    HiddenWord = TEXT("cakes");
+    HiddenWord = GetValidWords(Words)[FMath::RandRange(0, GetValidWords(Words).Num() - 1)];
     Lives = HiddenWord.Len();
     bGameOver = false;
 
     PrintLine(TEXT("Guess the %i letter word!"), HiddenWord.Len());
     PrintLine(TEXT("You have %i lives."), Lives);
     PrintLine(TEXT("Type in your guess and \npress enter to continue...")); // Prompt Player For Guess
+    PrintLine(TEXT("The HiddenWord is: %s."), *HiddenWord);// Debug Line  
 }
 
 void UBullCowCartridge::EndGame()
